@@ -16,7 +16,12 @@ import {
 
 const STORAGE_KEY = "kwl-taste-card:input";
 
-export default function CardStudio() {
+const PRIMARY_BUTTON =
+  "rounded-xl bg-amber px-6 py-3.5 text-base font-bold text-night transition hover:brightness-110 disabled:opacity-60";
+const SECONDARY_BUTTON =
+  "rounded-xl border border-line bg-surface-2 px-6 py-3.5 text-base font-bold transition hover:border-amber/60";
+
+export default function CardStudio({ aiEnabled }: { aiEnabled: boolean }) {
   const [input, setInput] = useState<CardInput>(EMPTY_CARD);
   const [artwork, setArtwork] = useState<HTMLImageElement | null>(null);
   const [logo, setLogo] = useState<HTMLCanvasElement | null>(null);
@@ -247,46 +252,44 @@ export default function CardStudio() {
             </Field>
           </Section>
 
-          <Section title="カードを作る">
-            <label className="mb-5 flex items-start gap-3 text-sm text-muted">
-              <input
-                type="checkbox"
-                checked={useAiArt}
-                onChange={(e) => setUseAiArt(e.target.checked)}
-                className="mt-0.5 size-4 accent-amber"
-              />
-              <span>
-                好きな味に合わせた背景アートを AI で生成する
-                <span className="mt-0.5 block text-xs text-muted/70">
-                  オフにすると、好きな味の色から作るグラデーション背景になります
+          <Section
+            title={aiEnabled ? "カードを作る" : "カードを保存する"}
+            note={aiEnabled ? undefined : "背景は、選んだ好きな味の色から作られます"}
+          >
+            {aiEnabled && (
+              <label className="flex items-start gap-3 text-sm text-muted">
+                <input
+                  type="checkbox"
+                  checked={useAiArt}
+                  onChange={(e) => setUseAiArt(e.target.checked)}
+                  className="mt-0.5 size-4 accent-amber"
+                />
+                <span>
+                  好きな味に合わせた背景アートを AI で生成する
+                  <span className="mt-0.5 block text-xs text-muted/70">
+                    オフにすると、好きな味の色から作るグラデーション背景になります
+                  </span>
                 </span>
-              </span>
-            </label>
+              </label>
+            )}
             <div className="flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={generate}
-                disabled={generating}
-                className="rounded-xl bg-amber px-6 py-3.5 text-base font-bold text-night transition hover:brightness-110 disabled:opacity-60"
-              >
-                {generating ? "生成中…(30秒ほど)" : "背景をつくる"}
-              </button>
+              {aiEnabled && (
+                <button type="button" onClick={generate} disabled={generating} className={PRIMARY_BUTTON}>
+                  {generating ? "生成中…(30秒ほど)" : "背景をつくる"}
+                </button>
+              )}
               <button
                 type="button"
                 onClick={download}
-                className="rounded-xl border border-line bg-surface-2 px-6 py-3.5 text-base font-bold transition hover:border-amber/60"
+                className={aiEnabled ? SECONDARY_BUTTON : PRIMARY_BUTTON}
               >
                 PNG を保存
               </button>
-              <button
-                type="button"
-                onClick={share}
-                className="rounded-xl border border-line bg-surface-2 px-6 py-3.5 text-base font-bold transition hover:border-amber/60"
-              >
+              <button type="button" onClick={share} className={SECONDARY_BUTTON}>
                 共有
               </button>
             </div>
-            {notice && <p className="mt-4 text-sm text-amber/90">{notice}</p>}
+            {notice && <p className="text-sm text-amber/90">{notice}</p>}
           </Section>
         </div>
 
