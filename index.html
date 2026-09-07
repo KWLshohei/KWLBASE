@@ -1,0 +1,1156 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ARTIFACT-BODY-START -->
+<title>ウイスキー お好みカルテ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@600;700&display=swap">
+<style>
+/* ---------- tokens ---------- */
+:root{
+  --bg:#f1ede4; --surface:#fffdf8; --surface-2:#f7f3ea; --sunk:#eae4d7;
+  --line:#ded5c3; --line-strong:#c6b9a1;
+  --text:#241d16; --text-2:#4d4136; --muted:#7b6f60;
+  --accent:#9a6520; --accent-soft:#e8d5b4; --accent-ink:#fffdf8;
+  --shadow:0 1px 2px rgba(60,44,24,.08), 0 8px 24px -18px rgba(60,44,24,.45);
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#13100c; --surface:#1b1712; --surface-2:#221c16; --sunk:#100d0a;
+    --line:#382f25; --line-strong:#54473a;
+    --text:#efe7da; --text-2:#cdc2b3; --muted:#9b8e7e;
+    --accent:#d99b3f; --accent-soft:#4a3820; --accent-ink:#191410;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 30px -22px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#13100c; --surface:#1b1712; --surface-2:#221c16; --sunk:#100d0a;
+  --line:#382f25; --line-strong:#54473a;
+  --text:#efe7da; --text-2:#cdc2b3; --muted:#9b8e7e;
+  --accent:#d99b3f; --accent-soft:#4a3820; --accent-ink:#191410;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 30px -22px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Noto Sans JP",system-ui,sans-serif;
+  font-size:15px; line-height:1.7; -webkit-text-size-adjust:100%;
+}
+h1,h2,h3{font-family:"Zen Old Mincho","Hiragino Mincho ProN",serif; font-weight:700; margin:0; text-wrap:balance}
+button,input,select,textarea{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.eyebrow{
+  font-size:10.5px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--muted); font-weight:500;
+}
+
+/* ---------- header ---------- */
+.hdr{
+  position:sticky; top:0; z-index:30; background:var(--surface);
+  border-bottom:1px solid var(--line);
+}
+.hdr-in{
+  max-width:1240px; margin:0 auto; padding:10px 20px;
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+}
+.brand{display:flex; align-items:baseline; gap:10px; margin-right:auto}
+.brand h1{font-size:19px; letter-spacing:.02em}
+.brand .en{font-size:10.5px; letter-spacing:.2em; color:var(--muted)}
+.shop{
+  display:flex; align-items:center; gap:6px;
+  border:1px solid var(--line); border-radius:999px; padding:3px 12px; background:var(--surface-2);
+}
+.shop label{font-size:10.5px; letter-spacing:.14em; color:var(--muted)}
+.shop input{
+  border:0; background:transparent; width:11ch; font-size:13.5px; font-weight:500; padding:2px 0;
+}
+.tabs{display:flex; gap:2px; background:var(--sunk); padding:3px; border-radius:999px}
+.tab{
+  border:0; background:transparent; color:var(--text-2); cursor:pointer;
+  padding:6px 16px; border-radius:999px; font-size:13.5px; font-weight:500;
+}
+.tab[aria-selected="true"]{background:var(--surface); color:var(--text); box-shadow:var(--shadow)}
+.btn{
+  border:1px solid var(--line-strong); background:var(--surface); color:var(--text);
+  padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13.5px; font-weight:500;
+  transition:background .12s ease, border-color .12s ease;
+}
+.btn:hover{background:var(--surface-2); border-color:var(--accent)}
+.btn-primary{background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:700}
+.btn-primary:hover{background:var(--accent); filter:brightness(1.06)}
+.btn-sm{padding:4px 10px; font-size:12.5px}
+.btn-ghost{border-color:transparent; background:transparent; color:var(--muted)}
+.btn-ghost:hover{color:var(--text); background:var(--surface-2); border-color:var(--line)}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1240px; margin:0 auto; padding:22px 20px 80px}
+.cols{display:grid; grid-template-columns:minmax(0,1fr) 322px; gap:22px; align-items:start}
+@media (max-width:1040px){ .cols{grid-template-columns:minmax(0,1fr)} }
+
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+  padding:18px 20px 20px; margin-bottom:14px; box-shadow:var(--shadow);
+}
+.sec-head{display:flex; align-items:baseline; gap:10px; margin-bottom:14px; border-bottom:1px solid var(--line); padding-bottom:9px}
+.sec-no{
+  font-family:"Zen Old Mincho",serif; font-size:13px; font-weight:700; color:var(--accent);
+  font-variant-numeric:tabular-nums; letter-spacing:.04em;
+}
+.sec-title{font-size:16.5px}
+.sec-en{margin-left:auto; font-size:10px; letter-spacing:.2em; color:var(--muted); text-transform:uppercase}
+.sub{font-size:12px; color:var(--muted); margin:14px 0 7px; font-weight:500}
+.sub:first-child{margin-top:0}
+
+/* ---------- fields ---------- */
+.fields{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px 16px}
+.field{display:flex; flex-direction:column; gap:4px}
+.field > span{font-size:11.5px; color:var(--muted); letter-spacing:.05em}
+.input{
+  background:var(--surface-2); border:1px solid var(--line); border-radius:7px;
+  padding:8px 11px; width:100%; font-size:14.5px;
+}
+.input:focus{border-color:var(--accent); background:var(--surface)}
+textarea.input{resize:vertical; min-height:84px; line-height:1.8}
+
+/* ---------- chips ---------- */
+.chips{display:flex; flex-wrap:wrap; gap:7px}
+.chip{
+  display:inline-flex; align-items:center; gap:7px; cursor:pointer; user-select:none;
+  border:1px solid var(--line); background:var(--surface-2); color:var(--text-2);
+  border-radius:999px; padding:6px 13px 6px 10px; font-size:13.5px; line-height:1.35;
+  transition:border-color .12s ease, background .12s ease, color .12s ease;
+}
+.chip input{position:absolute; opacity:0; width:1px; height:1px}
+.chip .box{
+  width:14px; height:14px; border:1.5px solid var(--line-strong); border-radius:4px; flex:none;
+  display:grid; place-items:center; font-size:10px; color:transparent;
+}
+.chip.radio .box{border-radius:50%}
+.chip:hover{border-color:var(--line-strong)}
+.chip.is-on{background:var(--accent-soft); border-color:var(--accent); color:var(--text)}
+.chip.is-on .box{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.chip.is-on .box::after{content:"✓"; color:var(--accent-ink); font-size:10px; line-height:1}
+.chip input:focus-visible + .box{outline:2px solid var(--accent); outline-offset:2px}
+
+/* ---------- scales ---------- */
+.scale{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:10px; padding:5px 0}
+.scale + .scale{border-top:1px dashed var(--line)}
+.scale .lo{text-align:right}
+.scale .lo,.scale .hi{font-size:12.5px; color:var(--muted)}
+.steps{display:flex; gap:5px}
+.step{
+  width:32px; height:32px; border-radius:50%; border:1px solid var(--line-strong);
+  background:var(--surface-2); color:var(--muted); cursor:pointer;
+  font-size:12.5px; font-variant-numeric:tabular-nums; display:grid; place-items:center; padding:0;
+}
+.step:hover{border-color:var(--accent)}
+.step.is-on{background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:700}
+@media (max-width:560px){
+  .scale{grid-template-columns:1fr; gap:2px; text-align:center}
+  .scale .lo{text-align:center}
+  .steps{justify-content:center}
+}
+
+/* ---------- wheel & radar ---------- */
+.viz{display:grid; grid-template-columns:1fr; gap:8px; justify-items:center}
+.viz > div{width:100%; max-width:460px}
+.viz svg{width:100%; height:auto; display:block}
+.viz .note{font-size:12px; color:var(--muted); text-align:center}
+.wseg{cursor:pointer; transition:opacity .12s ease}
+.wseg:hover{opacity:1 !important}
+.wlabel{pointer-events:none; font-family:"Zen Kaku Gothic New",sans-serif}
+.radar-dot{cursor:pointer}
+.radar-grid{fill:none; stroke:var(--line-strong); stroke-width:1}
+.radar-axis{stroke:var(--line-strong); stroke-width:1}
+.radar-label{fill:var(--text); font-size:11px; font-weight:700; font-family:"Zen Kaku Gothic New",sans-serif}
+.radar-tick{fill:var(--muted); font-size:8.5px}
+.radar-area{fill:var(--accent); fill-opacity:.22; stroke:var(--accent); stroke-width:2; stroke-linejoin:round}
+.radar-toolbar{display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap}
+
+/* ---------- rail ---------- */
+.rail{position:sticky; top:74px; display:flex; flex-direction:column; gap:12px}
+@media (max-width:1040px){ .rail{position:static} }
+.rail .card{margin-bottom:0}
+.rail-no{
+  font-family:"Zen Old Mincho",serif; font-size:26px; font-variant-numeric:tabular-nums;
+  letter-spacing:.04em; line-height:1.1;
+}
+.rail-name{font-size:15px; font-weight:700; margin-top:2px}
+.rail-meta{font-size:12px; color:var(--muted)}
+.keywords{display:flex; flex-wrap:wrap; gap:6px; margin-top:4px}
+.kw{
+  font-size:12px; padding:3px 9px; border-radius:5px;
+  background:var(--surface-2); border:1px solid var(--line); color:var(--text-2);
+}
+.kw.lead{background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:700}
+.rec-text{font-size:13px; color:var(--text-2); line-height:1.85; margin:0}
+.rail-actions{display:grid; gap:8px}
+.rail-actions .row{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.saved-note{font-size:12px; color:var(--accent); min-height:1.4em; text-align:center}
+.legend{display:grid; grid-template-columns:1fr 1fr; gap:4px 10px; font-size:12px; color:var(--text-2)}
+.legend i{display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:6px}
+
+/* ---------- list ---------- */
+.list-tools{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px}
+.list-tools .input{width:auto; min-width:220px; flex:1}
+table.rec{width:100%; border-collapse:collapse; font-size:14px}
+table.rec th{
+  text-align:left; font-size:10.5px; letter-spacing:.14em; color:var(--muted);
+  text-transform:uppercase; font-weight:500; padding:0 10px 8px; border-bottom:1px solid var(--line);
+}
+table.rec td{padding:11px 10px; border-bottom:1px solid var(--line); vertical-align:top}
+table.rec tr:hover td{background:var(--surface-2)}
+td.no{font-variant-numeric:tabular-nums; color:var(--accent); font-weight:700; white-space:nowrap}
+td.nm{font-weight:500}
+td.kw-cell{color:var(--muted); font-size:12.5px}
+td.act{text-align:right; white-space:nowrap}
+.empty{padding:44px 20px; text-align:center; color:var(--muted); font-size:14px}
+.io{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:16px; padding-top:14px; border-top:1px solid var(--line)}
+.io p{margin:0; font-size:12px; color:var(--muted); flex-basis:100%}
+.scroll-x{overflow-x:auto}
+
+/* ---------- print sheet ---------- */
+.sheet{display:none}
+@media print{
+  @page{size:A4; margin:11mm}
+  html,body{background:#fff !important; color:#000 !important}
+  .hdr,.wrap{display:none !important}
+  .sheet{display:block; font-size:9pt; line-height:1.5; color:#000}
+  .sheet .p{page-break-after:always}
+  .sheet .p:last-child{page-break-after:auto}
+  .sheet .top{display:flex; align-items:flex-end; gap:12px; border-bottom:1.6pt solid #000; padding-bottom:4pt; margin-bottom:8pt}
+  .sheet .top h2{font-size:15pt; letter-spacing:.04em}
+  .sheet .top .en{font-size:7pt; letter-spacing:.24em}
+  .sheet .top .meta{margin-left:auto; text-align:right; font-size:8.5pt; line-height:1.6}
+  .sheet .g{display:grid; grid-template-columns:1fr 1fr; gap:6pt 12pt}
+  .sheet .b{border:.6pt solid #999; border-radius:2pt; padding:5pt 7pt; break-inside:avoid}
+  .sheet .b h3{font-size:9pt; border-bottom:.6pt solid #ccc; padding-bottom:2pt; margin-bottom:4pt;
+    display:flex; gap:5pt; align-items:baseline}
+  .sheet .b h3 em{font-style:normal; color:#8a6a2a; font-size:8pt}
+  .sheet .b h3 span{margin-left:auto; font-size:6.5pt; letter-spacing:.16em; color:#777}
+  .sheet ul{list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:1pt 9pt}
+  .sheet li{font-size:8.5pt}
+  .sheet li.on{font-weight:700}
+  .sheet .lines{border-bottom:.4pt solid #bbb; height:13pt}
+  .sheet .row5{display:flex; align-items:center; gap:5pt; font-size:8pt; padding:1.5pt 0}
+  .sheet .row5 .nm{width:52pt; text-align:right; color:#555}
+  .sheet .row5 .nx{width:56pt; color:#555}
+  .sheet .row5 b{width:15pt; text-align:center; font-weight:400}
+  .sheet .row5 b.on{background:#000; color:#fff; border-radius:50%}
+  .sheet .full{grid-column:1 / -1}
+  .sheet svg{width:100%; height:auto}
+  .sheet .radar-label{fill:#000}
+  .sheet .radar-grid,.sheet .radar-axis{stroke:#bbb}
+  .sheet .radar-tick{fill:#888}
+  .sheet .radar-area{fill:#8a6a2a; fill-opacity:.18; stroke:#7a5a1c}
+  .sheet .free{white-space:pre-wrap; font-size:8.5pt; min-height:30pt}
+}
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important; animation:none !important}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="brand">
+      <h1>ウイスキー お好みカルテ</h1>
+      <span class="en">Whisky Tasting Profile</span>
+    </div>
+    <div class="shop">
+      <label for="shopName">店舗名</label>
+      <input id="shopName" type="text" placeholder="店名を入力" autocomplete="off">
+    </div>
+    <div class="tabs" role="tablist" aria-label="画面切り替え">
+      <button class="tab" id="tabKarte" role="tab" aria-selected="true" aria-controls="viewKarte">カルテ記入</button>
+      <button class="tab" id="tabList" role="tab" aria-selected="false" aria-controls="viewList">お客様一覧 <span id="countBadge"></span></button>
+    </div>
+    <button class="btn btn-sm" id="themeBtn" title="表示テーマを切り替え">◐ 表示</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ KARTE ============ -->
+<div id="viewKarte" role="tabpanel" aria-labelledby="tabKarte">
+<div class="cols">
+  <div class="col-main">
+
+    <section class="card">
+      <div class="sec-head"><span class="sec-no">01</span><h2 class="sec-title">基本情報</h2><span class="sec-en">Profile</span></div>
+      <div class="fields">
+        <label class="field"><span>お名前</span><input class="input" id="f_name" type="text" placeholder="山田 花子" autocomplete="off"></label>
+        <label class="field"><span>ご来店日</span><input class="input" id="f_visitDate" type="date"></label>
+        <label class="field"><span>紹介者</span><input class="input" id="f_referrer" type="text" autocomplete="off"></label>
+        <label class="field"><span>テイスティングID</span><input class="input" id="f_tastingId" type="text" autocomplete="off"></label>
+      </div>
+      <p class="sub">ウイスキー歴</p>
+      <div class="chips" data-group="experience"></div>
+      <p class="sub">普段の飲み方（複数可）</p>
+      <div class="chips" data-group="drinkStyles"></div>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="sec-no">02</span><h2 class="sec-title">樽・原酒タイプ</h2><span class="sec-en">Cask Type</span></div>
+      <p class="sub">基本の4分類 — もっとも近いもの</p>
+      <div class="chips" data-group="caskBasic"></div>
+      <p class="sub">その他の樽・フィニッシュ</p>
+      <div class="chips" data-group="caskOther"></div>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="sec-no">03</span><h2 class="sec-title">ピート・スモーク</h2><span class="sec-en">Peat</span></div>
+      <div data-scales="peat"></div>
+      <p class="sub">スモークの種類（好みがあれば）</p>
+      <div class="chips" data-group="smokeTypes"></div>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="sec-no">04</span><h2 class="sec-title">味わいのバランス</h2><span class="sec-en">Balance</span></div>
+      <div data-scales="balance"></div>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="sec-no">05</span><h2 class="sec-title">好みの産地</h2><span class="sec-en">Origin</span></div>
+      <p class="sub">スコットランド</p>
+      <div class="chips" data-group="regionScotland"></div>
+      <p class="sub">その他の国</p>
+      <div class="chips" data-group="regionOther"></div>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="sec-no">06</span><h2 class="sec-title">熟成年数・ボトリング</h2><span class="sec-en">Age &amp; Bottling</span></div>
+      <div class="chips" data-group="aging"></div>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="sec-no">07</span><h2 class="sec-title">フレーバーホイール</h2><span class="sec-en">Flavor Wheel</span></div>
+      <div class="viz">
+        <div id="wheelHost"></div>
+        <p class="note">外側をタップすると「好きな香味」に登録され、09 のプロファイルにも反映されます。</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="sec-no">08</span><h2 class="sec-title">好きな香味（詳細）</h2><span class="sec-en">Tasting Notes</span></div>
+      <div id="flavorGroups"></div>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="sec-no">09</span><h2 class="sec-title">フレーバープロファイル</h2><span class="sec-en">Profile Map</span></div>
+      <div class="viz">
+        <div id="radarHost"></div>
+        <div class="radar-toolbar">
+          <span class="note">点をタップして 1〜5 で採点</span>
+          <button class="btn btn-sm" id="radarAuto">香味の選択から自動採点</button>
+          <button class="btn btn-sm btn-ghost" id="radarClear">リセット</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="sec-no">10</span><h2 class="sec-title">苦手・NGな香味</h2><span class="sec-en">Avoid</span></div>
+      <div class="chips" data-group="avoid"></div>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="sec-no">11</span><h2 class="sec-title">ご予算の目安</h2><span class="sec-en">Budget</span></div>
+      <p class="sub">1杯あたり</p>
+      <div class="chips" data-group="budgetGlass"></div>
+      <p class="sub">1本あたり</p>
+      <div class="chips" data-group="budgetBottle"></div>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="sec-no">12</span><h2 class="sec-title">フリーコメント</h2><span class="sec-en">Comments</span></div>
+      <label class="field"><span>好きな銘柄・思い出のボトル・リクエストなど</span>
+        <textarea class="input" id="f_comment" rows="4"></textarea></label>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="sec-no">★</span><h2 class="sec-title">スタッフメモ・次回のおすすめ</h2><span class="sec-en">Staff Only</span></div>
+      <div class="fields">
+        <label class="field" style="grid-column:1/-1"><span>お出ししたボトル・反応</span>
+          <textarea class="input" id="f_staffMemo" rows="3"></textarea></label>
+        <label class="field" style="grid-column:1/-1"><span>次回のおすすめ</span>
+          <input class="input" id="f_nextRecommend" type="text" autocomplete="off"></label>
+      </div>
+    </section>
+
+  </div>
+
+  <aside class="rail">
+    <div class="card">
+      <p class="eyebrow">Karte No.</p>
+      <div class="rail-no" id="railNo">—</div>
+      <div class="rail-name" id="railName">新規カルテ</div>
+      <div class="rail-meta" id="railMeta">未保存</div>
+      <div class="keywords" id="railKeywords"></div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow" style="margin-bottom:6px">おすすめの方向性</p>
+      <p class="rec-text" id="railRec">記入するとここに提案が出ます。</p>
+    </div>
+
+    <div class="card">
+      <div class="rail-actions">
+        <button class="btn btn-primary" id="saveBtn">このカルテを保存</button>
+        <div class="row">
+          <button class="btn" id="newBtn">新規</button>
+          <button class="btn" id="printBtn">印刷</button>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="printBlankBtn">白紙のカルテを印刷</button>
+        <div class="saved-note" id="savedNote"></div>
+      </div>
+    </div>
+  </aside>
+</div>
+</div>
+
+<!-- ============ LIST ============ -->
+<div id="viewList" role="tabpanel" aria-labelledby="tabList" hidden>
+  <section class="card">
+    <div class="sec-head"><span class="sec-no">＃</span><h2 class="sec-title">お客様一覧</h2><span class="sec-en">Guests</span></div>
+    <div class="list-tools">
+      <input class="input" id="searchInput" type="search" placeholder="お名前・キーワード・No. で検索" autocomplete="off">
+      <button class="btn" id="newBtn2">新規カルテ</button>
+    </div>
+    <div class="scroll-x"><table class="rec">
+      <thead><tr><th>No.</th><th>お名前</th><th>ご来店日</th><th>プロファイル</th><th>更新</th><th></th></tr></thead>
+      <tbody id="recBody"></tbody>
+    </table></div>
+    <div class="empty" id="listEmpty" hidden>まだカルテがありません。「新規カルテ」から記入してください。</div>
+    <div class="io">
+      <p>データはこの端末のブラウザ内にのみ保存されます。端末を替えるとき・バックアップを取るときは書き出しをお使いください。</p>
+      <button class="btn btn-sm" id="exportJson">JSONで書き出し</button>
+      <button class="btn btn-sm" id="copyJson">JSONをコピー</button>
+      <button class="btn btn-sm" id="exportCsv">CSVで書き出し</button>
+      <label class="btn btn-sm" style="display:inline-flex; align-items:center">JSONを読み込み
+        <input id="importJson" type="file" accept="application/json,.json" hidden></label>
+      <span class="saved-note" id="ioNote" style="text-align:left"></span>
+    </div>
+  </section>
+</div>
+
+</main>
+
+<div class="sheet" id="sheet" aria-hidden="true"></div>
+
+<script>
+"use strict";
+
+/* ============ マスタ定義（紙のカルテと同じ項目） ============ */
+const CATS = [
+  {key:'fruity', name:'フルーティー', short:'フルーティー', color:'#D9823F', subs:['柑橘','熟れた果実','ドライフルーツ','ベリー']},
+  {key:'floral', name:'フローラル',   short:'フローラル',   color:'#C098C8', subs:['花','ハーブ']},
+  {key:'sweet',  name:'スイート',     short:'スイート',     color:'#DDB13B', subs:['バニラ','キャラメル','はちみつ','洋菓子']},
+  {key:'rich',   name:'リッチ',       short:'リッチ',       color:'#9C4A47', subs:['シェリー','チョコレート','レーズン']},
+  {key:'woody',  name:'ウッディ',     short:'ウッディ',     color:'#8A5D35', subs:['オーク','杉・針葉樹','タンニン']},
+  {key:'smoky',  name:'スモーキー',   short:'スモーキー',   color:'#6E6E6E', subs:['ヨード・潮風','焚き火','薬品香','燻製']},
+  {key:'nutty',  name:'ナッツ・穀物', short:'ナッツ',       color:'#BE9C57', subs:['アーモンド','麦芽','パン・ビスケット']},
+  {key:'spicy',  name:'スパイシー',   short:'スパイシー',   color:'#B04B3F', subs:['シナモン','胡椒','クローブ','生姜']}
+];
+const GROUPS = {
+  experience:     {type:'radio', label:'ウイスキー歴', items:['初心者（〜半年）','1〜3年','3〜10年','10年以上']},
+  drinkStyles:    {type:'check', label:'普段の飲み方', items:['ストレート','トワイスアップ','ロック','水割り','ハイボール','カクテル']},
+  caskBasic:      {type:'radio', label:'基本の4分類', items:['バーボン樽','シェリー樽','バーボン樽×ピート','シェリー×ピート']},
+  caskOther:      {type:'check', label:'その他の樽・フィニッシュ', items:['ワイン樽（赤）','ワイン樽（白）','ポート樽','マデイラ樽','ラム樽','ミズナラ樽','バージンオーク','ソーテルヌ樽']},
+  smokeTypes:     {type:'check', label:'スモークの種類', items:['ヨード・潮風','焚き火・煤','薬品・正露丸','燻製・ベーコン']},
+  regionScotland: {type:'check', label:'スコットランド', items:['スペイサイド','アイラ','ハイランド','ローランド','キャンベルタウン','アイランズ']},
+  regionOther:    {type:'check', label:'その他の国', items:['アイリッシュ','アメリカン','ジャパニーズ','カナディアン','台湾・インド','欧州クラフト']},
+  aging:          {type:'check', label:'熟成年数・ボトリング', items:['NAS・若い酒','10年前後','12〜18年','21年以上','シングルカスク','オフィシャル']},
+  avoid:          {type:'check', label:'苦手・NGな香味', items:['ピート・薬品香','硫黄感','強いアルコール感','過度な甘さ','渋み・タンニン','特になし']},
+  budgetGlass:    {type:'radio', label:'1杯あたり', items:['〜1,000円','1,000〜2,000円','2,000〜4,000円','4,000円〜']},
+  budgetBottle:   {type:'radio', label:'1本あたり', items:['〜5,000円','5,000〜1万円','1〜3万円','3万円〜']}
+};
+const SCALE_SETS = {
+  peat: [{key:'peat', lo:'ノンピート', hi:'ヘビーピート'}],
+  balance: [
+    {key:'mild',       lo:'マイルド',     hi:'刺激的'},
+    {key:'body',       lo:'ライトボディ', hi:'フルボディ'},
+    {key:'sweetness',  lo:'ドライ',       hi:'スイート'},
+    {key:'abv',        lo:'低アルコール', hi:'カスクストレングス'},
+    {key:'finish',     lo:'余韻短め',     hi:'余韻長め'},
+    {key:'complexity', lo:'静か・繊細',   hi:'複雑・重層的'}
+  ]
+};
+const ALL_SCALES = SCALE_SETS.peat.concat(SCALE_SETS.balance);
+const TEXT_FIELDS = ['name','visitDate','referrer','tastingId','comment','staffMemo','nextRecommend'];
+const STORE_KEY = 'whisky-karte-v1';
+
+/* ============ 状態 ============ */
+function blankRecord(){
+  const r = {id:null, no:null, flavors:[], radarAuto:true, scales:{}, radar:{}, createdAt:null, updatedAt:null};
+  TEXT_FIELDS.forEach(function(k){ r[k] = ''; });
+  Object.keys(GROUPS).forEach(function(k){ r[k] = GROUPS[k].type === 'radio' ? '' : []; });
+  ALL_SCALES.forEach(function(s){ r.scales[s.key] = s.key === 'peat' ? 1 : 3; });
+  CATS.forEach(function(c){ r.radar[c.key] = 1; });
+  r.visitDate = new Date().toISOString().slice(0,10);
+  return r;
+}
+let db  = {shop:'', seq:1, records:[]};
+let cur = blankRecord();
+
+function load(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw){ const parsed = JSON.parse(raw); if(parsed && Array.isArray(parsed.records)) db = parsed; }
+  }catch(e){ /* 読めない場合は初期状態のまま */ }
+  if(!db.records.length) db.records = [sampleRecord()];
+  const maxNo = db.records.reduce(function(m, r){ return Math.max(m, r.no || 0); }, 0);
+  if(!db.seq || db.seq <= maxNo) db.seq = maxNo + 1;
+}
+function persist(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(db)); return true; }
+  catch(e){ return false; }
+}
+function sampleRecord(){
+  const r = blankRecord();
+  r.id = 'sample'; r.no = 1;
+  r.name = '見本データ（削除できます）';
+  r.experience = '3〜10年';
+  r.drinkStyles = ['ストレート','トワイスアップ'];
+  r.caskBasic = 'シェリー樽'; r.caskOther = ['ミズナラ樽'];
+  r.scales = {peat:2, mild:3, body:4, sweetness:4, abv:3, finish:4, complexity:4};
+  r.regionScotland = ['スペイサイド','ハイランド']; r.regionOther = ['ジャパニーズ'];
+  r.aging = ['12〜18年','オフィシャル'];
+  r.flavors = ['fruity:ドライフルーツ','sweet:はちみつ','rich:シェリー','rich:チョコレート','woody:オーク','spicy:シナモン'];
+  r.avoid = ['ピート・薬品香'];
+  r.budgetGlass = '1,000〜2,000円'; r.budgetBottle = '5,000〜1万円';
+  r.comment = 'マッカラン12年が好き。甘やかで余韻の長いものを探しています。';
+  r.staffMemo = 'グレンドロナック12年をご提供、好反応。';
+  r.nextRecommend = 'ベンリアック シェリーウッド / ミズナラフィニッシュ';
+  r.radar = autoRadar(r);
+  r.createdAt = r.updatedAt = new Date().toISOString();
+  return r;
+}
+function autoRadar(rec){
+  const out = {};
+  CATS.forEach(function(c){
+    const n = rec.flavors.filter(function(f){ return f.indexOf(c.key + ':') === 0; }).length;
+    out[c.key] = n ? Math.min(5, n + 1) : 1;
+  });
+  out.smoky = Math.max(out.smoky, rec.scales.peat || 1);
+  return out;
+}
+
+/* ============ 汎用ヘルパ ============ */
+const $  = function(sel, root){ return (root || document).querySelector(sel); };
+const $$ = function(sel, root){ return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
+const SVGNS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs){
+  const el = document.createElementNS(SVGNS, tag);
+  for(const k in attrs) el.setAttribute(k, attrs[k]);
+  return el;
+}
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+  });
+}
+function pad(n){ return String(n).padStart(4, '0'); }
+function polar(r, deg){
+  const rad = deg * Math.PI / 180;
+  return [200 + r * Math.sin(rad), 200 - r * Math.cos(rad)];
+}
+function ring(r0, r1, a0, a1){
+  const large = (a1 - a0) > 180 ? 1 : 0;
+  const p1 = polar(r1, a0), p2 = polar(r1, a1), p3 = polar(r0, a1), p4 = polar(r0, a0);
+  return 'M' + p1[0].toFixed(2) + ' ' + p1[1].toFixed(2) +
+         'A' + r1 + ' ' + r1 + ' 0 ' + large + ' 1 ' + p2[0].toFixed(2) + ' ' + p2[1].toFixed(2) +
+         'L' + p3[0].toFixed(2) + ' ' + p3[1].toFixed(2) +
+         'A' + r0 + ' ' + r0 + ' 0 ' + large + ' 0 ' + p4[0].toFixed(2) + ' ' + p4[1].toFixed(2) + 'Z';
+}
+
+/* ============ フォーム描画 ============ */
+function renderChips(){
+  Object.keys(GROUPS).forEach(function(key){
+    const cfg  = GROUPS[key];
+    const host = $('[data-group="' + key + '"]');
+    if(!host) return;
+    host.innerHTML = '';
+    cfg.items.forEach(function(item, i){
+      const lab = document.createElement('label');
+      lab.className = 'chip' + (cfg.type === 'radio' ? ' radio' : '');
+      lab.dataset.group = key; lab.dataset.value = item;
+      const inp = document.createElement('input');
+      inp.type = cfg.type === 'radio' ? 'radio' : 'checkbox';
+      inp.name = key; inp.value = item; inp.id = key + '_' + i;
+      const box = document.createElement('span'); box.className = 'box';
+      const txt = document.createElement('span'); txt.textContent = item;
+      lab.appendChild(inp); lab.appendChild(box); lab.appendChild(txt);
+      inp.addEventListener('change', function(){
+        if(cfg.type === 'radio'){
+          cur[key] = inp.checked ? item : '';
+        }else{
+          const set = cur[key].filter(function(v){ return v !== item; });
+          if(inp.checked) set.push(item);
+          cur[key] = set;
+          if(key === 'smokeTypes' && inp.checked && cur.scales.peat < 2) setScale('peat', 2);
+        }
+        markGroup(key); refresh();
+      });
+      host.appendChild(lab);
+    });
+  });
+}
+function markGroup(key){
+  const cfg = GROUPS[key];
+  $$('[data-group="' + key + '"] .chip').forEach(function(lab){
+    const on = cfg.type === 'radio' ? cur[key] === lab.dataset.value : cur[key].indexOf(lab.dataset.value) >= 0;
+    lab.classList.toggle('is-on', on);
+    lab.querySelector('input').checked = on;
+  });
+}
+function renderScales(){
+  Object.keys(SCALE_SETS).forEach(function(setKey){
+    const host = $('[data-scales="' + setKey + '"]');
+    if(!host) return;
+    host.innerHTML = '';
+    SCALE_SETS[setKey].forEach(function(s){
+      const row = document.createElement('div');
+      row.className = 'scale'; row.dataset.scale = s.key;
+      const lo = document.createElement('div'); lo.className = 'lo'; lo.textContent = s.lo;
+      const steps = document.createElement('div'); steps.className = 'steps';
+      steps.setAttribute('role', 'group'); steps.setAttribute('aria-label', s.lo + 'から' + s.hi);
+      for(let v = 1; v <= 5; v++){
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'step'; b.textContent = v; b.dataset.v = v;
+        b.setAttribute('aria-label', s.lo + '〜' + s.hi + ' ' + v);
+        b.addEventListener('click', function(){ setScale(s.key, v); refresh(); });
+        steps.appendChild(b);
+      }
+      const hi = document.createElement('div'); hi.className = 'hi'; hi.textContent = s.hi;
+      row.appendChild(lo); row.appendChild(steps); row.appendChild(hi);
+      host.appendChild(row);
+    });
+  });
+}
+function setScale(key, v){
+  cur.scales[key] = v;
+  markScale(key);
+  if(key === 'peat' && cur.radarAuto) cur.radar = autoRadar(cur);
+}
+function markScale(key){
+  const row = $('[data-scale="' + key + '"]');
+  if(!row) return;
+  $$('.step', row).forEach(function(b){ b.classList.toggle('is-on', Number(b.dataset.v) === cur.scales[key]); });
+}
+function renderFlavorGroups(){
+  const host = $('#flavorGroups');
+  host.innerHTML = '';
+  CATS.forEach(function(c){
+    const h = document.createElement('p'); h.className = 'sub';
+    h.innerHTML = '<span style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:7px;background:' + c.color + '"></span>' + esc(c.name);
+    const wrap = document.createElement('div'); wrap.className = 'chips';
+    c.subs.forEach(function(sub){
+      const id = c.key + ':' + sub;
+      const lab = document.createElement('label');
+      lab.className = 'chip'; lab.dataset.flavor = id;
+      const inp = document.createElement('input'); inp.type = 'checkbox'; inp.value = id;
+      const box = document.createElement('span'); box.className = 'box';
+      const txt = document.createElement('span'); txt.textContent = sub;
+      lab.appendChild(inp); lab.appendChild(box); lab.appendChild(txt);
+      inp.addEventListener('change', function(){ toggleFlavor(id, inp.checked); });
+      wrap.appendChild(lab);
+    });
+    host.appendChild(h); host.appendChild(wrap);
+  });
+}
+function toggleFlavor(id, on){
+  const set = cur.flavors.filter(function(f){ return f !== id; });
+  if(on) set.push(id);
+  cur.flavors = set;
+  if(cur.radarAuto) cur.radar = autoRadar(cur);
+  markFlavors(); paintWheel(); paintRadar(); refresh();
+}
+function markFlavors(){
+  $$('label[data-flavor]').forEach(function(lab){
+    const on = cur.flavors.indexOf(lab.dataset.flavor) >= 0;
+    lab.classList.toggle('is-on', on);
+    lab.querySelector('input').checked = on;
+  });
+}
+
+/* ============ フレーバーホイール ============ */
+function buildWheel(){
+  const svg = svgEl('svg', {viewBox:'0 0 400 400', role:'group', 'aria-label':'フレーバーホイール'});
+  const HOLE = 44, C0 = 44, C1 = 104, S0 = 104, S1 = 176;
+  CATS.forEach(function(c, i){
+    const a0 = i * 45, a1 = a0 + 45;
+    const cat = svgEl('path', {d:ring(C0, C1, a0 + .4, a1 - .4), fill:c.color, stroke:'#fffdf8', 'stroke-width':1.4});
+    cat.dataset.cat = c.key; cat.setAttribute('class', 'wcat');
+    svg.appendChild(cat);
+    const mid = (a0 + a1) / 2;
+    const p = polar(74, mid);
+    const flip = (mid > 90 && mid < 270) ? 180 : 0;
+    const t = svgEl('text', {x:p[0], y:p[1], 'text-anchor':'middle', 'dominant-baseline':'central',
+      fill:'#fffdf8', 'font-size':'9.5', 'font-weight':'700', class:'wlabel',
+      transform:'rotate(' + (mid + flip) + ' ' + p[0] + ' ' + p[1] + ')'});
+    t.textContent = c.short;
+    svg.appendChild(t);
+
+    const step = 45 / c.subs.length;
+    c.subs.forEach(function(sub, j){
+      const b0 = a0 + j * step, b1 = b0 + step, bm = (b0 + b1) / 2;
+      const seg = svgEl('path', {d:ring(S0, S1, b0 + .4, b1 - .4), fill:c.color, stroke:'#fffdf8', 'stroke-width':1.2});
+      seg.setAttribute('class', 'wseg');
+      seg.dataset.flavor = c.key + ':' + sub;
+      seg.setAttribute('tabindex', '0');
+      seg.setAttribute('role', 'checkbox');
+      seg.setAttribute('aria-label', c.name + ' ' + sub);
+      seg.addEventListener('click', function(){ toggleFlavor(seg.dataset.flavor, cur.flavors.indexOf(seg.dataset.flavor) < 0); });
+      seg.addEventListener('keydown', function(ev){
+        if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); seg.dispatchEvent(new Event('click')); }
+      });
+      svg.appendChild(seg);
+      const q = polar(140, bm);
+      const spin = bm <= 180 ? -90 : 90;
+      const lt = svgEl('text', {x:q[0], y:q[1], 'text-anchor':'middle', 'dominant-baseline':'central',
+        fill:'#2b211a', 'font-size':'7.8', 'font-weight':'500', class:'wlabel',
+        transform:'rotate(' + bm + ' ' + q[0] + ' ' + q[1] + ') rotate(' + spin + ' ' + q[0] + ' ' + q[1] + ')'});
+      lt.textContent = sub;
+      svg.appendChild(lt);
+    });
+  });
+  svg.appendChild(svgEl('circle', {cx:200, cy:200, r:HOLE, fill:'#2E241B'}));
+  ['WHISKY','FLAVOR','WHEEL'].forEach(function(line, i){
+    const t = svgEl('text', {x:200, y:200 + (i - 1) * 12, 'text-anchor':'middle', 'dominant-baseline':'central',
+      fill:'#EFE2CE', 'font-size':'10', 'font-weight':'700', 'letter-spacing':'.08em', class:'wlabel'});
+    t.textContent = line;
+    svg.appendChild(t);
+  });
+  $('#wheelHost').appendChild(svg);
+}
+function paintWheel(){
+  $$('#wheelHost .wseg').forEach(function(seg){
+    const on = cur.flavors.indexOf(seg.dataset.flavor) >= 0;
+    seg.style.opacity = on ? '1' : '.32';
+    seg.setAttribute('stroke-width', on ? '2.2' : '1.2');
+    seg.setAttribute('aria-checked', on ? 'true' : 'false');
+  });
+  $$('#wheelHost .wcat').forEach(function(cat){
+    const any = cur.flavors.some(function(f){ return f.indexOf(cat.dataset.cat + ':') === 0; });
+    cat.style.opacity = any ? '1' : '.5';
+  });
+}
+
+/* ============ レーダー（フレーバープロファイル） ============ */
+const RMAX = 100;
+function buildRadar(host, interactive){
+  const svg = svgEl('svg', {viewBox:'0 0 400 400', role:'group', 'aria-label':'フレーバープロファイル'});
+  for(let i = 1; i <= 5; i++) svg.appendChild(svgEl('circle', {cx:200, cy:200, r:RMAX * i / 5, class:'radar-grid'}));
+  CATS.forEach(function(c, i){
+    const a = i * 45, p = polar(RMAX, a);
+    svg.appendChild(svgEl('line', {x1:200, y1:200, x2:p[0], y2:p[1], class:'radar-axis'}));
+    const q = polar(RMAX + 26, a);
+    const anchor = Math.abs(q[0] - 200) < 3 ? 'middle' : (q[0] > 200 ? 'start' : 'end');
+    const t = svgEl('text', {x:q[0], y:q[1] + (a === 0 ? -2 : a === 180 ? 10 : 4), 'text-anchor':anchor, class:'radar-label'});
+    t.textContent = c.name;
+    svg.appendChild(t);
+  });
+  for(let v = 1; v <= 5; v++){
+    const p = polar(RMAX * v / 5, 22.5);
+    const t = svgEl('text', {x:p[0] + 6, y:p[1] + 2, class:'radar-tick'});
+    t.textContent = v;
+    svg.appendChild(t);
+  }
+  const area = svgEl('polygon', {points:'', class:'radar-area'});
+  svg.appendChild(area);
+  CATS.forEach(function(c, i){
+    for(let v = 1; v <= 5; v++){
+      const p = polar(RMAX * v / 5, i * 45);
+      const dot = svgEl('circle', {cx:p[0], cy:p[1], r:3.2, fill:'currentColor', 'fill-opacity':'.35'});
+      dot.dataset.cat = c.key; dot.dataset.v = v;
+      dot.setAttribute('class', 'radar-dot');
+      svg.appendChild(dot);
+      if(interactive){
+        const hit = svgEl('circle', {cx:p[0], cy:p[1], r:11, fill:'transparent'});
+        hit.setAttribute('class', 'radar-dot');
+        hit.setAttribute('tabindex', '0');
+        hit.setAttribute('role', 'button');
+        hit.setAttribute('aria-label', c.name + ' を ' + v + ' にする');
+        hit.addEventListener('click', function(){
+          cur.radar[c.key] = v; cur.radarAuto = false; paintRadar(); refresh();
+        });
+        hit.addEventListener('keydown', function(ev){
+          if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); hit.dispatchEvent(new Event('click')); }
+        });
+        svg.appendChild(hit);
+      }
+    }
+  });
+  host.appendChild(svg);
+  return svg;
+}
+function radarPoints(rec){
+  return CATS.map(function(c, i){
+    const p = polar(RMAX * (rec.radar[c.key] || 1) / 5, i * 45);
+    return p[0].toFixed(1) + ',' + p[1].toFixed(1);
+  }).join(' ');
+}
+function paintRadar(){
+  const svg = $('#radarHost svg');
+  if(!svg) return;
+  $('polygon', svg).setAttribute('points', radarPoints(cur));
+  $$('.radar-dot', svg).forEach(function(d){
+    if(!d.dataset.cat) return;
+    const on = Number(d.dataset.v) === cur.radar[d.dataset.cat];
+    d.setAttribute('fill-opacity', on ? '1' : '.3');
+    d.setAttribute('r', on ? '4.6' : '3.2');
+  });
+}
+
+/* ============ キーワード・提案 ============ */
+function topCats(rec, n){
+  return CATS.slice().sort(function(a, b){ return (rec.radar[b.key] || 0) - (rec.radar[a.key] || 0); })
+             .filter(function(c){ return (rec.radar[c.key] || 0) >= 3; }).slice(0, n);
+}
+function keywordsOf(rec){
+  const kw = [];
+  if(rec.caskBasic) kw.push(rec.caskBasic);
+  const peat = rec.scales.peat || 1;
+  kw.push(peat >= 4 ? 'ヘビーピート' : peat === 3 ? 'ピート中程度' : peat === 2 ? 'ほのかなピート' : 'ノンピート');
+  if(rec.scales.body >= 4) kw.push('フルボディ'); else if(rec.scales.body <= 2) kw.push('ライトボディ');
+  if(rec.scales.sweetness >= 4) kw.push('甘口寄り'); else if(rec.scales.sweetness <= 2) kw.push('ドライ');
+  if(rec.scales.abv >= 4) kw.push('高アルコール可');
+  topCats(rec, 2).forEach(function(c){ kw.push(c.name); });
+  const region = (rec.regionScotland || []).concat(rec.regionOther || []);
+  if(region.length) kw.push(region[0]);
+  return kw;
+}
+function recommendText(rec){
+  if(!rec.caskBasic && !rec.flavors.length && !rec.name) return '記入するとここに提案が出ます。';
+  const tops = topCats(rec, 2).map(function(c){ return c.name; });
+  const region = (rec.regionScotland || []).concat(rec.regionOther || []);
+  const peat = rec.scales.peat || 1;
+  const parts = [];
+  parts.push((rec.caskBasic || '樽の指定なし') + 'を軸に、' +
+    (peat >= 4 ? 'しっかりしたピート' : peat >= 3 ? '中程度のスモーク' : peat === 2 ? '軽いスモーク' : 'ノンピート') + 'で。');
+  if(tops.length) parts.push(tops.join('と') + 'の香りが立つボトルが好相性です。');
+  if(region.length) parts.push('産地は' + region.slice(0, 2).join('・') + 'から。');
+  if(rec.scales.body >= 4 || rec.scales.finish >= 4) parts.push('厚みと余韻のあるタイプを優先。');
+  else if(rec.scales.body <= 2) parts.push('軽快で飲み口の軽いタイプを優先。');
+  const ng = (rec.avoid || []).filter(function(v){ return v !== '特になし'; });
+  if(ng.length) parts.push('※ ' + ng.join('・') + 'は避ける。');
+  if(rec.budgetGlass || rec.budgetBottle){
+    parts.push('予算目安：' + (rec.budgetGlass ? '1杯 ' + rec.budgetGlass : '') +
+      (rec.budgetGlass && rec.budgetBottle ? ' / ' : '') + (rec.budgetBottle ? '1本 ' + rec.budgetBottle : '') + '。');
+  }
+  return parts.join('');
+}
+
+/* ============ 画面更新 ============ */
+function refresh(){
+  $('#railNo').textContent = cur.no ? 'No. ' + pad(cur.no) : '—';
+  $('#railName').textContent = cur.name ? cur.name + ' 様' : '新規カルテ';
+  $('#railMeta').textContent = cur.updatedAt
+    ? '最終更新 ' + new Date(cur.updatedAt).toLocaleString('ja-JP', {year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'})
+    : '未保存';
+  const kws = keywordsOf(cur);
+  $('#railKeywords').innerHTML = kws.map(function(k, i){
+    return '<span class="kw' + (i === 0 ? ' lead' : '') + '">' + esc(k) + '</span>';
+  }).join('');
+  $('#railRec').textContent = recommendText(cur);
+  $('#countBadge').textContent = db.records.length ? '(' + db.records.length + ')' : '';
+}
+function syncForm(){
+  TEXT_FIELDS.forEach(function(k){ const el = $('#f_' + k); if(el) el.value = cur[k] || ''; });
+  Object.keys(GROUPS).forEach(markGroup);
+  ALL_SCALES.forEach(function(s){ markScale(s.key); });
+  markFlavors(); paintWheel(); paintRadar(); refresh();
+}
+
+/* ============ 保存・一覧 ============ */
+function saveCurrent(){
+  const now = new Date().toISOString();
+  if(!cur.id){
+    cur.id = 'k' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    cur.no = db.seq++;
+    cur.createdAt = now;
+  }
+  cur.updatedAt = now;
+  const idx = db.records.findIndex(function(r){ return r.id === cur.id; });
+  const copy = JSON.parse(JSON.stringify(cur));
+  if(idx >= 0) db.records[idx] = copy; else db.records.unshift(copy);
+  const ok = persist();
+  note($('#savedNote'), ok ? 'No. ' + pad(cur.no) + ' を保存しました' : '保存できませんでした（ブラウザの保存領域を確認してください）');
+  renderList(); refresh();
+}
+function note(el, msg){
+  el.textContent = msg;
+  clearTimeout(el._t);
+  el._t = setTimeout(function(){ el.textContent = ''; }, 4000);
+}
+function openRecord(id){
+  const rec = db.records.find(function(r){ return r.id === id; });
+  if(!rec) return;
+  cur = JSON.parse(JSON.stringify(rec));
+  ALL_SCALES.forEach(function(s){ if(cur.scales[s.key] == null) cur.scales[s.key] = s.key === 'peat' ? 1 : 3; });
+  CATS.forEach(function(c){ if(cur.radar[c.key] == null) cur.radar[c.key] = 1; });
+  showView('karte'); syncForm();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function newRecord(){
+  cur = blankRecord();
+  showView('karte'); syncForm();
+  window.scrollTo({top:0, behavior:'smooth'});
+  $('#f_name').focus();
+}
+function renderList(){
+  const q = ($('#searchInput').value || '').trim().toLowerCase();
+  const rows = db.records.slice().sort(function(a, b){
+    return String(b.updatedAt || '').localeCompare(String(a.updatedAt || ''));
+  }).filter(function(r){
+    if(!q) return true;
+    const hay = [pad(r.no), r.name, r.comment, r.nextRecommend].concat(keywordsOf(r)).join(' ').toLowerCase();
+    return hay.indexOf(q) >= 0;
+  });
+  $('#recBody').innerHTML = rows.map(function(r){
+    return '<tr data-id="' + r.id + '">' +
+      '<td class="no">' + pad(r.no) + '</td>' +
+      '<td class="nm">' + esc(r.name || '（無名）') + '</td>' +
+      '<td>' + esc(r.visitDate || '') + '</td>' +
+      '<td class="kw-cell">' + esc(keywordsOf(r).slice(0, 4).join(' / ')) + '</td>' +
+      '<td class="kw-cell">' + esc((r.updatedAt || '').slice(0, 10)) + '</td>' +
+      '<td class="act"><button class="btn btn-sm" data-open="' + r.id + '">開く</button> ' +
+      '<button class="btn btn-sm btn-ghost" data-del="' + r.id + '">削除</button></td></tr>';
+  }).join('');
+  $('#listEmpty').hidden = rows.length > 0;
+  refresh();
+}
+function showView(which){
+  const karte = which === 'karte';
+  $('#viewKarte').hidden = !karte;
+  $('#viewList').hidden = karte;
+  $('#tabKarte').setAttribute('aria-selected', String(karte));
+  $('#tabList').setAttribute('aria-selected', String(!karte));
+  if(!karte) renderList();
+}
+
+/* ============ 印刷用シート ============ */
+function itemList(items, chosen){
+  const set = [].concat(chosen || []);
+  return '<ul>' + items.map(function(i){
+    const on = set.indexOf(i) >= 0;
+    return '<li class="' + (on ? 'on' : '') + '">' + (on ? '☑' : '☐') + ' ' + esc(i) + '</li>';
+  }).join('') + '</ul>';
+}
+function scaleRow(s, v){
+  let cells = '';
+  for(let i = 1; i <= 5; i++) cells += '<b class="' + (i === v ? 'on' : '') + '">' + i + '</b>';
+  return '<div class="row5"><span class="nm">' + esc(s.lo) + '</span>' + cells + '<span class="nx">' + esc(s.hi) + '</span></div>';
+}
+function box(no, title, en, inner, full){
+  return '<div class="b' + (full ? ' full' : '') + '"><h3><em>' + no + '</em>' + esc(title) + '<span>' + en + '</span></h3>' + inner + '</div>';
+}
+function buildSheet(rec, blank){
+  const sheet = $('#sheet');
+  const shop = db.shop || '＿＿＿＿＿＿＿＿';
+  let radarSvg = '';
+  const tmp = document.createElement('div');
+  buildRadar(tmp, false);
+  if(!blank) $('polygon', tmp).setAttribute('points', radarPoints(rec));
+  radarSvg = tmp.innerHTML;
+
+  const line = function(label, val){
+    return '<div style="display:flex;gap:5pt;align-items:baseline;font-size:8.5pt;padding:1pt 0">' +
+      '<span style="color:#666;width:46pt">' + esc(label) + '</span>' +
+      '<span style="flex:1;border-bottom:.4pt solid #ccc">' + esc(val || '') + '</span></div>';
+  };
+  let html = '<div class="p">';
+  html += '<div class="top"><div><h2>ウイスキー お好みカルテ</h2>' +
+    '<div class="en">WHISKY TASTING PROFILE</div></div>' +
+    '<div class="meta">店舗名：' + esc(shop) + '<br>No. ' + (rec.no ? pad(rec.no) : '＿＿＿＿') + '</div></div>';
+  html += '<div class="g">';
+  html += box('01', '基本情報', 'PROFILE',
+    line('お名前', rec.name) + line('ご来店日', rec.visitDate) + line('紹介者', rec.referrer) + line('テイスティングID', rec.tastingId) +
+    '<div style="margin-top:3pt;color:#666;font-size:7.5pt">ウイスキー歴</div>' + itemList(GROUPS.experience.items, rec.experience) +
+    '<div style="margin-top:3pt;color:#666;font-size:7.5pt">普段の飲み方</div>' + itemList(GROUPS.drinkStyles.items, rec.drinkStyles));
+  html += box('02', '樽・原酒タイプ', 'CASK TYPE',
+    itemList(GROUPS.caskBasic.items, rec.caskBasic) +
+    '<div style="margin-top:3pt;color:#666;font-size:7.5pt">その他の樽・フィニッシュ</div>' + itemList(GROUPS.caskOther.items, rec.caskOther));
+  html += box('03', 'ピート・スモーク', 'PEAT',
+    scaleRow(SCALE_SETS.peat[0], rec.scales.peat) +
+    '<div style="margin-top:3pt;color:#666;font-size:7.5pt">スモークの種類</div>' + itemList(GROUPS.smokeTypes.items, rec.smokeTypes));
+  html += box('04', '味わいのバランス', 'BALANCE',
+    SCALE_SETS.balance.map(function(s){ return scaleRow(s, rec.scales[s.key]); }).join(''));
+  html += box('05', '好みの産地', 'ORIGIN',
+    '<div style="color:#666;font-size:7.5pt">スコットランド</div>' + itemList(GROUPS.regionScotland.items, rec.regionScotland) +
+    '<div style="margin-top:3pt;color:#666;font-size:7.5pt">その他の国</div>' + itemList(GROUPS.regionOther.items, rec.regionOther));
+  html += box('06', '熟成年数・ボトリング', 'AGE & BOTTLING', itemList(GROUPS.aging.items, rec.aging));
+  html += '</div></div>';
+
+  html += '<div class="p"><div class="top"><div><h2>フレーバー</h2><div class="en">FLAVOR &amp; NOTES</div></div>' +
+    '<div class="meta">' + esc(rec.name ? rec.name + ' 様' : '') + '<br>No. ' + (rec.no ? pad(rec.no) : '＿＿＿＿') + '</div></div>';
+  html += '<div class="g">';
+  html += box('08', '好きな香味（詳細）', 'TASTING NOTES',
+    CATS.map(function(c){
+      return '<div style="color:' + c.color + ';font-size:7.5pt;margin-top:2pt">' + esc(c.name) + '</div>' +
+        itemList(c.subs.map(function(s){ return s; }),
+                 blank ? [] : rec.flavors.filter(function(f){ return f.indexOf(c.key + ':') === 0; })
+                                          .map(function(f){ return f.split(':')[1]; }));
+    }).join(''));
+  html += box('09', 'フレーバープロファイル', 'PROFILE MAP', radarSvg);
+  html += box('10', '苦手・NGな香味', 'AVOID', itemList(GROUPS.avoid.items, rec.avoid));
+  html += box('11', 'ご予算の目安', 'BUDGET',
+    '<div style="color:#666;font-size:7.5pt">1杯あたり</div>' + itemList(GROUPS.budgetGlass.items, rec.budgetGlass) +
+    '<div style="margin-top:3pt;color:#666;font-size:7.5pt">1本あたり</div>' + itemList(GROUPS.budgetBottle.items, rec.budgetBottle));
+  html += box('12', 'フリーコメント', 'COMMENTS',
+    blank ? '<div class="lines"></div><div class="lines"></div><div class="lines"></div>'
+          : '<div class="free">' + esc(rec.comment) + '</div>', true);
+  html += box('★', 'スタッフメモ・次回のおすすめ', 'STAFF ONLY',
+    blank ? '<div class="lines"></div><div class="lines"></div>'
+          : '<div class="free">' + esc(rec.staffMemo) + '</div>' +
+            '<div style="margin-top:3pt;font-size:8pt"><b>次回のおすすめ：</b>' + esc(rec.nextRecommend) + '</div>' +
+            '<div style="margin-top:3pt;font-size:8pt;color:#555">' + esc(recommendText(rec)) + '</div>', true);
+  html += '</div></div>';
+  sheet.innerHTML = html;
+}
+function printKarte(blank){
+  let rec = cur;
+  if(blank){
+    rec = blankRecord();
+    rec.visitDate = '';
+    ALL_SCALES.forEach(function(s){ rec.scales[s.key] = 0; });
+  }
+  buildSheet(rec, !!blank);
+  window.print();
+}
+
+/* ============ 書き出し・読み込み ============ */
+function downloadFile(name, text, mime){
+  try{
+    const blob = new Blob([text], {type:mime + ';charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    note($('#ioNote'), name + ' を書き出しました');
+  }catch(e){
+    note($('#ioNote'), '書き出しできませんでした。「JSONをコピー」をお使いください');
+  }
+}
+function toCsv(){
+  const head = ['No.','お名前','ご来店日','紹介者','テイスティングID','ウイスキー歴','飲み方','基本の樽','その他の樽',
+    'ピート','スモーク','産地','熟成・ボトリング','好きな香味','NG','1杯予算','1本予算','コメント','スタッフメモ','次回のおすすめ','更新'];
+  const rows = db.records.map(function(r){
+    return [pad(r.no), r.name, r.visitDate, r.referrer, r.tastingId, r.experience, (r.drinkStyles || []).join('|'),
+      r.caskBasic, (r.caskOther || []).join('|'), r.scales.peat, (r.smokeTypes || []).join('|'),
+      (r.regionScotland || []).concat(r.regionOther || []).join('|'), (r.aging || []).join('|'),
+      (r.flavors || []).map(function(f){ return f.split(':')[1]; }).join('|'),
+      (r.avoid || []).join('|'), r.budgetGlass, r.budgetBottle, r.comment, r.staffMemo, r.nextRecommend, r.updatedAt];
+  });
+  return '﻿' + [head].concat(rows).map(function(cells){
+    return cells.map(function(c){ return '"' + String(c == null ? '' : c).replace(/"/g, '""') + '"'; }).join(',');
+  }).join('\r\n');
+}
+
+/* ============ 初期化 ============ */
+function init(){
+  load();
+  renderChips(); renderScales(); renderFlavorGroups();
+  buildWheel(); buildRadar($('#radarHost'), true);
+
+  $('#shopName').value = db.shop || '';
+  $('#shopName').addEventListener('input', function(){ db.shop = $('#shopName').value; persist(); });
+
+  TEXT_FIELDS.forEach(function(k){
+    const el = $('#f_' + k);
+    if(el) el.addEventListener('input', function(){ cur[k] = el.value; refresh(); });
+  });
+
+  $('#radarAuto').addEventListener('click', function(){ cur.radarAuto = true; cur.radar = autoRadar(cur); paintRadar(); refresh(); });
+  $('#radarClear').addEventListener('click', function(){
+    cur.radarAuto = false; CATS.forEach(function(c){ cur.radar[c.key] = 1; }); paintRadar(); refresh();
+  });
+  $('#saveBtn').addEventListener('click', saveCurrent);
+  $('#newBtn').addEventListener('click', newRecord);
+  $('#newBtn2').addEventListener('click', newRecord);
+  $('#printBtn').addEventListener('click', function(){ printKarte(false); });
+  $('#printBlankBtn').addEventListener('click', function(){ printKarte(true); });
+  $('#tabKarte').addEventListener('click', function(){ showView('karte'); });
+  $('#tabList').addEventListener('click', function(){ showView('list'); });
+  $('#searchInput').addEventListener('input', renderList);
+
+  $('#recBody').addEventListener('click', function(ev){
+    const openId = ev.target.getAttribute && ev.target.getAttribute('data-open');
+    const delId  = ev.target.getAttribute && ev.target.getAttribute('data-del');
+    if(openId) return openRecord(openId);
+    if(delId){
+      const rec = db.records.find(function(r){ return r.id === delId; });
+      if(rec && window.confirm('No. ' + pad(rec.no) + '「' + (rec.name || '無名') + '」を削除します。よろしいですか？')){
+        db.records = db.records.filter(function(r){ return r.id !== delId; });
+        persist(); if(cur.id === delId) cur = blankRecord(), syncForm();
+        renderList();
+      }
+      return;
+    }
+    const tr = ev.target.closest && ev.target.closest('tr[data-id]');
+    if(tr) openRecord(tr.dataset.id);
+  });
+
+  $('#exportJson').addEventListener('click', function(){
+    downloadFile('whisky-karte-' + new Date().toISOString().slice(0,10) + '.json', JSON.stringify(db, null, 2), 'application/json');
+  });
+  $('#exportCsv').addEventListener('click', function(){
+    downloadFile('whisky-karte-' + new Date().toISOString().slice(0,10) + '.csv', toCsv(), 'text/csv');
+  });
+  $('#copyJson').addEventListener('click', function(){
+    const text = JSON.stringify(db);
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ note($('#ioNote'), 'クリップボードにコピーしました'); },
+        function(){ note($('#ioNote'), 'コピーできませんでした'); });
+    }else{ note($('#ioNote'), 'この環境ではコピーできません'); }
+  });
+  $('#importJson').addEventListener('change', function(ev){
+    const file = ev.target.files && ev.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(){
+      try{
+        const data = JSON.parse(String(reader.result));
+        if(!data || !Array.isArray(data.records)) throw new Error('形式が違います');
+        const ids = db.records.map(function(r){ return r.id; });
+        data.records.forEach(function(r){ if(ids.indexOf(r.id) < 0) db.records.push(r); });
+        db.seq = Math.max(db.seq, (data.seq || 0), db.records.reduce(function(m, r){ return Math.max(m, r.no || 0); }, 0) + 1);
+        db.shop = db.shop || data.shop || '';
+        persist(); renderList();
+        note($('#ioNote'), data.records.length + ' 件を読み込みました');
+      }catch(e){ note($('#ioNote'), '読み込めませんでした（JSONファイルを確認してください）'); }
+      ev.target.value = '';
+    };
+    reader.readAsText(file);
+  });
+
+  const themeBtn = $('#themeBtn');
+  let theme = '';
+  try{ theme = localStorage.getItem(STORE_KEY + ':theme') || ''; }catch(e){}
+  const applyTheme = function(t){
+    if(t) document.documentElement.setAttribute('data-theme', t);
+    else document.documentElement.removeAttribute('data-theme');
+    themeBtn.textContent = t === 'dark' ? '● 夜' : t === 'light' ? '○ 昼' : '◐ 自動';
+  };
+  applyTheme(theme);
+  themeBtn.addEventListener('click', function(){
+    theme = theme === '' ? 'dark' : theme === 'dark' ? 'light' : '';
+    applyTheme(theme);
+    try{ localStorage.setItem(STORE_KEY + ':theme', theme); }catch(e){}
+  });
+
+  const first = db.records[0];
+  if(first) cur = JSON.parse(JSON.stringify(first));
+  syncForm(); renderList();
+}
+init();
+</script>
+<!-- ARTIFACT-BODY-END -->
+</body>
+</html>
