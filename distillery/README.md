@@ -36,35 +36,33 @@ npm run preview  # ビルド結果の確認
 
 ## デプロイ
 
-本番は **Vercel** で公開しています： https://kwlbase.vercel.app
+このリポジトリは 1 つで 2 つのアプリを持っています。**このアプリはサブフォルダ
+`distillery/` 側**で、リポジトリ直下の「KWL 好み交換カード」（Next.js）とは
+別の Vercel プロジェクトとして公開します。
 
-`main` ブランチにプッシュすると Vercel が自動でビルドして本番へ反映します
-（プルリクエストを出すと preview 用の URL も自動で作られます）。ビルド設定は
-`vercel.json` に明示してあるので、プロジェクト側の設定に依存しません。
+Vercel でのプロジェクト作成時の設定：
 
 | 項目 | 値 |
 | --- | --- |
+| Repository | `KWLshohei/KWLBASE` |
+| **Root Directory** | **`distillery`** |
 | Framework | Vite |
 | Install | `npm ci` |
 | Build | `npm run build` |
 | Output | `dist` |
 
-他のホスティングに置く場合も、`npm run build` で出力される `dist/` をそのまま
-アップロードするだけです。1 ファイルで配りたい場合は `npm run build:single`
-（`dist-single/kwlbase.html`）が使えます。
+Root Directory 以外は `distillery/vercel.json` に書いてあるので、Vercel 側で
+入力するのは Root Directory だけです。設定後は `main` ブランチにプッシュする
+たびに自動でビルド・公開されます（プルリクエストを出すと preview URL も自動で
+作られます）。
 
-## データの保存について
+`vite.config.js` で `css.postcss` を空設定にしているのは、親ディレクトリにある
+カードアプリの `postcss.config.mjs` を Vite が拾ってビルドが失敗するのを防ぐ
+ためです。
 
-このアプリは**サーバーを持ちません**。アカウント情報・ボトル記録・追加した蒸留所は、すべて
-ブラウザの `localStorage` に保存されます。
-
-- 端末やブラウザが変わると記録は引き継がれません
-- ブラウザのデータを削除すると記録も消えます
-- パスワードはソルト付き SHA-256 ハッシュで保存していますが、あくまでローカル完結のデモ用認証です
-
-複数端末で共有したり、仲間内で見せ合えるようにする場合は、`src/lib/storage.js` /
-`src/lib/auth.js` / `src/lib/bottles.js` の 3 ファイルをサーバー API（Supabase・Firebase・
-自前バックエンド等）に差し替える構成にしてあります。
+他のホスティングに置く場合も、`distillery/` で `npm run build` して出力される
+`dist/` をそのままアップロードするだけです。1 ファイルで配りたい場合は
+`npm run build:single`（`dist-single/kwlbase.html`）が使えます。
 
 ## 構成
 
