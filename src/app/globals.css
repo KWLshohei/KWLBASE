@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  --color-night: #100c09;
+  --color-surface: #1a1411;
+  --color-surface-2: #241c17;
+  --color-line: #3a2e26;
+  --color-amber: #e7b24b;
+  --color-ink: #f6f1e7;
+  --color-muted: #a8998a;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Noto Sans CJK JP",
+    "Yu Gothic", "YuGothic", "Meiryo", system-ui, sans-serif;
+  background:
+    radial-gradient(120% 80% at 50% -10%, #2a1d14 0%, transparent 60%),
+    var(--color-night);
+  color: var(--color-ink);
+  min-height: 100dvh;
+}
+
+input,
+textarea {
+  font-family: inherit;
+}
