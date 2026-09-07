@@ -1026,7 +1026,25 @@ function printKarte(blank){
 }
 
 /* ============ 書き出し・読み込み ============ */
+let dlApi = null;   /* claude.ai の Artifact で開いたときだけ使える保存API */
+function initDownloads(){
+  try{
+    if(window.claude && typeof window.claude.use === 'function'){
+      window.claude.use('downloads').then(function(api){ dlApi = api; }, function(){});
+    }
+  }catch(e){}
+}
 function downloadFile(name, text, mime){
+  if(dlApi){
+    dlApi.save({filename:name, data:text}).then(
+      function(){ note($('#ioNote'), name + ' を保存しました'); },
+      function(err){
+        note($('#ioNote'), (err && err.code === 'declined')
+          ? '保存を取り消しました'
+          : '保存できませんでした。「JSONをコピー」をお使いください');
+      });
+    return;
+  }
   try{
     const blob = new Blob([text], {type:mime + ';charset=utf-8'});
     const a = document.createElement('a');
@@ -1055,7 +1073,7 @@ function toCsv(){
 
 /* ============ 初期化 ============ */
 function init(){
-  load();
+  load(); initDownloads();
   renderChips(); renderScales(); renderFlavorGroups();
   buildWheel(); buildRadar($('#radarHost'), true);
 
