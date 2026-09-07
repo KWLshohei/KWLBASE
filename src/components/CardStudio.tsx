@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { renderCard } from "@/lib/cardRenderer";
+import { loadLogoMark } from "@/lib/logo";
 import {
   CardInput,
   EMPTY_CARD,
@@ -18,6 +19,7 @@ const STORAGE_KEY = "kwl-taste-card:input";
 export default function CardStudio() {
   const [input, setInput] = useState<CardInput>(EMPTY_CARD);
   const [artwork, setArtwork] = useState<HTMLImageElement | null>(null);
+  const [logo, setLogo] = useState<HTMLCanvasElement | null>(null);
   const [generating, setGenerating] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [useAiArt, setUseAiArt] = useState(true);
@@ -34,11 +36,17 @@ export default function CardStudio() {
   }, [input]);
 
   useEffect(() => {
+    loadLogoMark().then(setLogo);
+  }, []);
+
+  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const family = getComputedStyle(document.body).fontFamily;
-    renderCard(canvas, input, artwork, family);
-  }, [input, artwork]);
+    renderCard(canvas, input, artwork, family, logo);
+  }, [input, artwork, logo]);
+
+  const logoUrl = useMemo(() => logo?.toDataURL() ?? null, [logo]);
 
   const cycleFlavor = useCallback((id: string) => {
     setInput((prev) => {
@@ -131,13 +139,19 @@ export default function CardStudio() {
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-10 lg:py-16">
-      <header className="mb-12 max-w-2xl">
-        <p className="text-xs font-bold tracking-[0.28em] text-amber">KANSAI WHISKY LOVERS</p>
-        <h1 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">好み交換カード</h1>
-        <p className="mt-5 text-[15px] leading-relaxed text-muted">
-          「何がお好きですか?」「苦手なものは?」を毎回ひとつずつ聞かなくていいように。
-          好きな味と苦手な味がひと目で伝わる、名刺がわりのカード画像を作ります。
-        </p>
+      <header className="mb-12 flex max-w-3xl items-start gap-5 sm:gap-7">
+        {logoUrl && (
+          // eslint-disable-next-line @next/next/no-img-element -- 変換済みの data URL なので最適化の対象外
+          <img src={logoUrl} alt="" className="w-16 shrink-0 sm:w-28" />
+        )}
+        <div>
+          <p className="text-xs font-bold tracking-[0.28em] text-amber">KANSAI WHISKY LOVERS</p>
+          <h1 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">好み交換カード</h1>
+          <p className="mt-5 text-[15px] leading-relaxed text-muted">
+            「何がお好きですか?」「苦手なものは?」を毎回ひとつずつ聞かなくていいように。
+            好きな味と苦手な味がひと目で伝わる、名刺がわりのカード画像を作ります。
+          </p>
+        </div>
       </header>
 
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">

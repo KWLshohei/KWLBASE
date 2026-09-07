@@ -252,24 +252,34 @@ function drawBackground(ctx: Ctx, input: CardInput, artwork: CanvasImageSource |
   ctx.fillRect(0, 0, CARD_W, CARD_H);
 }
 
-function drawFrame(ctx: Ctx, family: string) {
+const LOGO_H = 170;
+
+function drawFrame(ctx: Ctx, family: string, logo: HTMLCanvasElement | null) {
   ctx.strokeStyle = "rgba(231,178,75,0.35)";
   ctx.lineWidth = 3;
   roundRect(ctx, 26, 26, CARD_W - 52, CARD_H - 52, 22);
   ctx.stroke();
 
-  ctx.textBaseline = "top";
-  font(ctx, 900, 27, family, "0.24em");
-  ctx.fillStyle = AMBER;
-  ctx.fillText("KANSAI WHISKY LOVERS", PAD, 92);
+  // ロゴを左に置き、読ませたい文字はその右に並べる(ロゴ内の文字は小さすぎて読めないため)
+  let textX = PAD;
+  if (logo) {
+    const w = LOGO_H * (logo.width / logo.height);
+    ctx.drawImage(logo, PAD, 66, w, LOGO_H);
+    textX = PAD + w + 28;
+  }
 
-  font(ctx, 500, 26, family, "0.06em");
+  ctx.textBaseline = "top";
+  font(ctx, 900, 24, family, "0.22em");
+  ctx.fillStyle = AMBER;
+  ctx.fillText("KANSAI WHISKY LOVERS", textX, 122);
+
+  font(ctx, 500, 25, family, "0.06em");
   ctx.fillStyle = MUTED;
-  ctx.fillText("関西ウイスキーラバーズ ／ 好み交換カード", PAD, 138);
+  ctx.fillText("関西ウイスキーラバーズ ／ 好み交換カード", textX, 158);
   ctx.letterSpacing = "0em";
 
   ctx.fillStyle = "rgba(255,255,255,0.18)";
-  ctx.fillRect(PAD, 190, CARD_W - PAD * 2, 2);
+  ctx.fillRect(PAD, 262, CARD_W - PAD * 2, 2);
 
   const footerY = CARD_H - PAD - 52;
   ctx.fillStyle = "rgba(255,255,255,0.18)";
@@ -291,6 +301,7 @@ export function renderCard(
   input: CardInput,
   artwork: CanvasImageSource | null,
   family: string,
+  logo: HTMLCanvasElement | null,
 ) {
   canvas.width = CARD_W;
   canvas.height = CARD_H;
@@ -299,10 +310,10 @@ export function renderCard(
 
   ctx.clearRect(0, 0, CARD_W, CARD_H);
   drawBackground(ctx, input, artwork);
-  drawFrame(ctx, family);
+  drawFrame(ctx, family, logo);
 
   const bodyH = layoutBody(ctx, input, 0, family, false);
   const bottom = CARD_H - PAD - 52 - 46;
-  const startY = Math.max(250, bottom - bodyH);
+  const startY = Math.max(300, bottom - bodyH);
   layoutBody(ctx, input, startY, family, true);
 }
