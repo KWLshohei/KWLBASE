@@ -34,6 +34,25 @@ npm run preview  # ビルド結果の確認
 
 出力は完全な静的サイトなので、GitHub Pages・Netlify・Vercel・S3 などにそのまま置けます。
 
+## デプロイ
+
+本番は **Vercel** で公開しています： https://kwlbase.vercel.app
+
+`main` ブランチにプッシュすると Vercel が自動でビルドして本番へ反映します
+（プルリクエストを出すと preview 用の URL も自動で作られます）。ビルド設定は
+`vercel.json` に明示してあるので、プロジェクト側の設定に依存しません。
+
+| 項目 | 値 |
+| --- | --- |
+| Framework | Vite |
+| Install | `npm ci` |
+| Build | `npm run build` |
+| Output | `dist` |
+
+他のホスティングに置く場合も、`npm run build` で出力される `dist/` をそのまま
+アップロードするだけです。1 ファイルで配りたい場合は `npm run build:single`
+（`dist-single/kwlbase.html`）が使えます。
+
 ## データの保存について
 
 このアプリは**サーバーを持ちません**。アカウント情報・ボトル記録・追加した蒸留所は、すべて
