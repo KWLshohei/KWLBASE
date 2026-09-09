@@ -55,18 +55,36 @@ export default function CardStudio({ aiEnabled }: { aiEnabled: boolean }) {
 
   const cycleFlavor = useCallback((id: string) => {
     setInput((prev) => {
+      // 好き → 苦手(苦手が上限なら解除へ抜ける)
       if (prev.likes.includes(id)) {
         const likes = prev.likes.filter((x) => x !== id);
         if (prev.dislikes.length >= LIMITS.dislikes) return { ...prev, likes };
         return { ...prev, likes, dislikes: [...prev.dislikes, id] };
       }
+      // 苦手 → 解除
       if (prev.dislikes.includes(id)) {
         return { ...prev, dislikes: prev.dislikes.filter((x) => x !== id) };
       }
-      if (prev.likes.length >= LIMITS.likes) return prev;
-      return { ...prev, likes: [...prev.likes, id] };
+      // 解除 → 好き。好きが埋まっているときは苦手に回す。
+      // ここで何もしないと、好きを5つ選んだ時点で残りの味が一切選べなくなる。
+      if (prev.likes.length < LIMITS.likes) {
+        return { ...prev, likes: [...prev.likes, id] };
+      }
+      if (prev.dislikes.length < LIMITS.dislikes) {
+        return { ...prev, dislikes: [...prev.dislikes, id] };
+      }
+      return prev;
     });
   }, []);
+
+  const likesFull = input.likes.length >= LIMITS.likes;
+  const dislikesFull = input.dislikes.length >= LIMITS.dislikes;
+  const flavorHint =
+    likesFull && dislikesFull
+      ? "好き・苦手とも上限です。どれかを解除すると、また選べます"
+      : likesFull
+        ? "好きが上限です。ここからタップすると苦手になります"
+        : "タップするたび 好き → 苦手 → 解除 と切り替わります";
 
   const toggleServe = useCallback((id: string) => {
     setInput((prev) => {
@@ -185,10 +203,7 @@ export default function CardStudio({ aiEnabled }: { aiEnabled: boolean }) {
             </Field>
           </Section>
 
-          <Section
-            title="好きな味・苦手な味"
-            note="タップするたび 好き → 苦手 → 解除 と切り替わります"
-          >
+          <Section title="好きな味・苦手な味" note={flavorHint}>
             <div className="mb-4 flex gap-4 text-xs text-muted">
               <span>
                 好き <b className="text-amber">{input.likes.length}</b> / {LIMITS.likes}
