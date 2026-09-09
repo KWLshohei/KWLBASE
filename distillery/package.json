@@ -1,0 +1,26 @@
+{
+  "name": "kwlbase",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "KWLBASE - ウイスキー蒸留所 & ボトル記録アプリ",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build:single": "vite build --config vite.config.single.js && node scripts/make-single.mjs"
+  },
+  "dependencies": {
+    "d3-geo": "^3.1.1",
+    "lucide-react": "^0.453.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^2.13.3",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.3",
+    "vite": "^5.4.10"
+  }
+}
